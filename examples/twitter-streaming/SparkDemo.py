@@ -10,10 +10,22 @@ import time
 import json
 from pyspark import SparkContext
 from pyspark.streaming import StreamingContext
-import database
-import pandas as pd
-from pyspark.sql import SparkSession
-from pyspark.sql import DataFrameWriter
+import db
+import psycopg2
+
+
+def save_tweet(json_tweet):
+    try:
+        conn = db.connect()
+        sql = """insert into tweet(username) values(%s);"""
+        cur = conn.cursor()
+        print(json_tweet["user"]["name"], json_tweet["id"])
+        cur.execute(sql, (json_tweet["user"]["name"],))
+        conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        db.close(conn)
 
 
 # Our filter function:
@@ -27,6 +39,7 @@ def filter_tweets(tweet):
     if json_tweet.get('lang'):  # When the lang key was not present it caused issues
         if json_tweet['lang'] == 'en':
             print("english tweet")
+<<<<<<< HEAD
             print(json_tweet)
             print("end tweet")
             spark = SparkSession \
@@ -38,6 +51,10 @@ def filter_tweets(tweet):
             spark.write.jdbc("jdbc:postgresql:"+db.url+"/"+db.database, "schema.twitterdata",
                           properties={"user": db.user, "password": db.password})
 
+=======
+            # print(json_tweet)
+            save_tweet(json_tweet);
+>>>>>>> origin/master
             return True  # filter() requires a Boolean value
     return False
 
@@ -60,6 +77,7 @@ db = database.config()
 # it will throw an Exception.
 
 lines.foreachRDD(lambda rdd: rdd.filter(filter_tweets).coalesce(1).saveAsTextFile("./tweets/%f" % time.time()))
+# lines.foreachRDD(lambda rdd: rdd.filter(filter_tweets).coalesce(1))
 
 ssc.start()
 ssc.awaitTermination()

@@ -1,4 +1,4 @@
-# Welcome to PySparkCLI Documentation
+# Welcome to PySpark CLI Documentation
 
 This documentation contains the step-by-step procedure to create a PySpark project using a CLI. Please visit PySparkCLI [here](https://github.com/qburst/PySparkCLI).
 
@@ -112,7 +112,7 @@ Run the following commands, this should open up teh pyspark shell.
                     
 To exit pyspark shell, type Ctrl-z and enter. Or the python command exit()
 
-## Installation Steps:
+## Installation Steps
     
     git clone https://github.com/qburst/PySparkCLI.git
 
@@ -124,26 +124,27 @@ To exit pyspark shell, type Ctrl-z and enter. Or the python command exit()
 
 * `pysparkcli create [project-name]` - Create a new project.
     - Run the following code to create your project `sample`:
-
-        `pysparkcli create [PROJECT_NAME] --master [MASTER_URL] --cores [NUMBER]`
+        
+        `pysparkcli create sample -m local[*] -c 2 -t default`
 
         * master: master is the URL of the cluster it connects to. You can also use -m instead of --master.
-        * name : The name of your PySpark project. You can also use -n instead of --name.
+        * project_type: project_type is the type of the project you want to create like default, streaming etc. You can also use -t instead of --project_type.
         * cores : This controls the number of parallel tasks an executor can run. You can also use -c instead of --cores.
 
     - You'll see the following in your command line:
 
         ```
-        Started running project: sample/
-        19/11/25 10:37:07 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using
-        builtin-java classes where applicable
-        Hello World!.
+        Completed building project: sample
         ```
 
 * `pysparkcli run [project-path]` - Run the project by path.
     - Run the following code to run your project `sample`:
     
-        `pysparkcli run sample`
+        ```
+        virtualenv --python=/usr/bin/python3.7 sample.env
+        source sample.env/bin/activate
+        pysparkcli run sample
+        ```
 
     - You'll see the following in your command line:
 
@@ -153,28 +154,53 @@ To exit pyspark shell, type Ctrl-z and enter. Or the python command exit()
         builtin-java classes where applicable
         Hello World!.
         ```
-      
+        
+* `pysparkcli stream [project-path] [stream-file-path]` - Initiate the stream.
+    - Run the following code to  stream data for project `sample` using `twitter_stream` file:
+    
+        `pysparkcli stream sample twitter_stream`
+
+    - You'll see the following in your command line:
+
+        ```
+        (streaming_project_env) ➜  checking git:(docs_develop) ✗ pysparkcli stream test twitter_stream
+        Started streaming of project: test
+        Requirement already satisfied: certifi==2019.11.28 in ./streaming_project_env/lib/python3.6/site-packages (from -r test/requirements.txt (line 1))
+        Requirement already satisfied: chardet==3.0.4 in ./streaming_project_env/lib/python3.6/site-packages (from -r test/requirements.txt (line 2))
+        Requirement already satisfied: idna==2.8 in ./streaming_project_env/lib/python3.6/site-packages (from -r test/requirements.txt (line 3))
+        Requirement already satisfied: oauthlib==3.1.0 in ./streaming_project_env/lib/python3.6/site-packages (from -r test/requirements.txt (line 4))
+        Requirement already satisfied: py4j==0.10.7 in ./streaming_project_env/lib/python3.6/site-packages (from -r test/requirements.txt (line 5))
+        Requirement already satisfied: PySocks==1.7.1 in ./streaming_project_env/lib/python3.6/site-packages (from -r test/requirements.txt (line 6))
+        Requirement already satisfied: pyspark==2.4.4 in ./streaming_project_env/lib/python3.6/site-packages (from -r test/requirements.txt (line 7))
+        Requirement already satisfied: requests==2.22.0 in ./streaming_project_env/lib/python3.6/site-packages (from -r test/requirements.txt (line 8))
+        Requirement already satisfied: requests-oauthlib==1.3.0 in ./streaming_project_env/lib/python3.6/site-packages (from -r test/requirements.txt (line 9))
+        Requirement already satisfied: six==1.13.0 in ./streaming_project_env/lib/python3.6/site-packages (from -r test/requirements.txt (line 10))
+        Requirement already satisfied: tweepy==3.8.0 in ./streaming_project_env/lib/python3.6/site-packages (from -r test/requirements.txt (line 11))
+        Requirement already satisfied: urllib3==1.25.7 in ./streaming_project_env/lib/python3.6/site-packages (from -r test/requirements.txt (line 12))
+        Listening on port: 5555
+        ```
+
 * `pysparkcli test [project-path]` - Run the project by path.
     - Run the following code to run all tests for your project `sample`:
     
         `pysparkcli test sample`
         
     - You'll see the following in your command line:
+
         ```
         Started running test cases for project: sample
         19/12/09 14:02:13 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
         /usr/lib/python3.7/socket.py:660: ResourceWarning: unclosed <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 48848), raddr=('127.0.0.1', 32857)>
-          self._sock = None
+            self._sock = None
         ResourceWarning: Enable tracemalloc to get the object allocation traceback
         /usr/lib/python3.7/socket.py:660: ResourceWarning: unclosed <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 58534), raddr=('127.0.0.1', 42687)>
-          self._sock = None
+            self._sock = None
         ResourceWarning: Enable tracemalloc to get the object allocation traceback
         .
         ----------------------------------------------------------------------
         Ran 1 test in 6.041s
-        
-        OK
 
+        OK
         ```
 
 ## FAQ
@@ -244,4 +270,7 @@ All the documentation in this page is taken from:
 
 # Credits
 
-Special credits to https://github.com/AlexIoannides/pyspark-example-project and https://github.com/ekampf/PySpark-Boilerplate from where we formulated the basic structure for this PySpark project.
+We formulated the basic structure for this PySpark project from inputs from the following repositories:
+
+* [pyspark-example-project](https://github.com/AlexIoannides/pyspark-example-project)
+* [PySpark-Boilerplate](https://github.com/ekampf/PySpark-Boilerplate)
